@@ -15,6 +15,9 @@ from time import time
 import hashlib
 import json
 from flask import Flask
+from flask import jsonify
+from flask import request
+from uuid import uuid4
 '''区块类结构'''
 class Blockchain:
     def __init__(self):
@@ -53,7 +56,7 @@ class Blockchain:
     @staticmethod
     def hash(block):
         # 将block转化成一个字节数组
-        block_string = json.dump(block, sort_keys=True).encode()
+        block_string = json.dumps(block, sort_keys=True).encode()
         # 返回哈希之后的摘要信息
         return hashlib.sha256(block_string).hexdigest()
 
@@ -90,21 +93,61 @@ class Blockchain:
 # 通过flask实现与其他节点的通信
 # flask是轻量级的web server
 app = Flask(__name__)
+# 实例化blockchain
+blockchain = Blockchain()
+
+# 使用uuid随机生成模拟节点的地址
+node_identify = str(uuid4()).replace('-','')
 
 #  给服务器添加路由（api)
 # 添加新的交易
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
-    return "We'll add a new transactions"
+    values = request.get_json()
+    required = ['sender','recipient','amount']
+    if values is None:
+        return 'missing values', 400
+
+    if not all(k in values for k in required):
+        return 'missing values', 400
+    index = blockchain.new_transaction(values['sender'],
+                               values['recipient'],
+                               values['amount'])
+    response = {'message': f'Transaction will be added to Block {index}'}
+    return jsonify(response), 201
 
 # 挖矿（POW）
 @app.route('/mine', methods=['GET'])
 def mine():
+    last_block = blockchain.last_block
+    last_proof = last_block['proof']
+    proof = blockchain.proof_of_work(last_proof)
+    # 再添加一笔给自己的交易
+    blockchain.new_transaction(sender='0',
+                               recipient=node_identify,
+                               amount=1)
+    block = blockchain.new_block(proof, None)
+    response = {
+        'message': 'new block forged',
+        'index': block['index'],
+        'transactions': block['transactions'],
+        'proof': block['proof'],
+        'previous_hash': block['previous_hash']
+    }
+    return jsonify(response), 200
+
     return "We'll mine a new block"
+
+
 # 返回区块链信息
 @app.route('/chain', methods=['GET'])
 def full_chain():
-    return 'full chain'
+    reponse = {
+        'chain': blockchain.chain,
+        'length': len(blockchain.chain)
+    }
+    # 将json转化成字符串
+    return jsonify(reponse), 200
 
 
 if __name__ == '__main__':
