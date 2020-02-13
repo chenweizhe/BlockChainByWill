@@ -14,6 +14,7 @@
 from time import time
 import hashlib
 import json
+from flask import Flask
 '''区块类结构'''
 class Blockchain:
     def __init__(self):
@@ -86,4 +87,26 @@ class Blockchain:
         return guess_hash[0:4] == '0000'
 # 在现实生活中 比特币是以十八个0开头的 这个只是演示
 
+# 通过flask实现与其他节点的通信
+# flask是轻量级的web server
+app = Flask(__name__)
+
+#  给服务器添加路由（api)
+# 添加新的交易
+@app.route('/transactions/new', methods=['POST'])
+def new_transaction():
+    return "We'll add a new transactions"
+
+# 挖矿（POW）
+@app.route('/mine', methods=['GET'])
+def mine():
+    return "We'll mine a new block"
+# 返回区块链信息
+@app.route('/chain', methods=['GET'])
+def full_chain():
+    return 'full chain'
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
 
