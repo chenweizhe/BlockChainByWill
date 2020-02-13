@@ -60,3 +60,30 @@ class Blockchain:
     @property
     def last_block(self):
         return self.chain[-1]
+
+
+    # 实现工作量证明
+    def proof_of_work(self, last_proof: int) -> int:
+        proof = 0
+        # 验证哈希结果是否满足4个0开头
+        while self.valid_proof(last_proof, proof) is False:
+            proof += 1
+        # print(proof)
+        return proof
+
+    def valid_proof(self, last_proof: int, proof: int) -> bool:
+        # 转换并拼接成为字符串，再进行编码
+        guess = f'{last_proof}{proof}'.encode()
+        # 获取哈希之后的摘要
+        guess_hash = hashlib.sha256(guess).hexdigest()
+
+        # 验证guess_hash前四个字符是否为4个0 如果是就返回true 反之false
+        # if guess_hash[0: 4] == '0000':
+        #     return True
+        # else:
+        #     return  False
+        # print(guess_hash)
+        return guess_hash[0:4] == '0000'
+# 在现实生活中 比特币是以十八个0开头的 这个只是演示
+
+
