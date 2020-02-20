@@ -1,4 +1,4 @@
-# 区块链相关知识学习_Will Chen
+# BlockChainLearning_Will Chen
 # INTRODUCTION
 
 此仓库为幕课区块链的学习课程的笔记和代码，整理得比较杂
@@ -21,9 +21,13 @@
 
 1. blockchain.py文件是模拟了比特币的运行，对比特币系统功能的简单概括
 2. .sol文件是以太坊智能合约开发语言solidity的学习
-3. 后续将会上传学习笔记
+3. 已经上传[笔记](https://github.com/chenweizhe/BlockChainByWill/blob/master/src/区块链技术与应用.pdf)
 
 # REFERENCE
 
-1. [北大肖臻区块链主页](http://zhenxiao.com)
+1. [肖臻老师主页](http://zhenxiao.com)
 2. [幕课网课程](https://coding.imooc.com/class/214.html)
+3. [学习笔记](https://pan.baidu.com/s/1Y3oAgMGYLsHHTJT_hD8pQw )
+
+# part of code
+> 智能合约开发语言为solidity
